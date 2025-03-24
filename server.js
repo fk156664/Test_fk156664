@@ -5,6 +5,7 @@ class Kunde{
 		this.Vorname
 		this.Benutzername
 		this.Kennwort
+		this.Mail
 		// IstEingeloggt ist ein boolean.
 		// Der Wert ist entweder wahr oder falsch.
 		this.IstEingeloggt
@@ -19,7 +20,9 @@ kunde.Nachname = "Kiff"
 kunde.Vorname = "Pit"
 kunde.Benutzername = "pk"
 kunde.Kennwort = "123"
+kunde.Mail="pk123@borken-bank.de"
 kunde.IstEingeloggt = false
+
 
 // Klassenefinition des Kundenberaters
 class Kundenberater{
@@ -82,6 +85,7 @@ const cookieParser = require('cookie-parser')
 // Die Anforderungen an gültige Mails sind exakt festgelegt im RFC 5322. 
 
 const validator = require("email-validator");
+const res = require('express/lib/response')
 
 // Die Funktion validate wird auf das validator-Objekt aufgerufen.
 // Als Parameter wird eine Mail-Adresse an die Funktion übergeben.
@@ -124,7 +128,7 @@ const secretKey = 'mein_geheimer_schluessel';
 
 
 // Die app.get wird abgearbeitet, sobald die Index-Seite angesurft wird.
-app.get('/', (req, res) => {
+app.get('/index.ejs', (req, res) => {
 
 	// res ist die Antwort des Servers an den Browser.
 	// send() ist die Anweisung etwas an den Browser zu senden
@@ -161,12 +165,12 @@ app.get('/agb', (req, res) => {
 	if(kunde.IstEingeloggt){
 
 		// Wenn die Zugangsdaten korrekt sind, dann wird die angesurfte Seite gerendert.
-		res.render('login.ejs',{});
+		res.render('agb.ejs',{});
 
 	}else{
 		
 		// Wenn die Zugangsdaten nicht korrekt sind, dann wird die login-Seite gerendert.
-		res.render('agb.ejs',{
+		res.render('login.ejs',{
 			Meldung: "Melden Sie sich zuerst an."
 		});
 	}
@@ -262,9 +266,28 @@ app.post('/profil', (req, res) => {
 	}
 });
 
+
+
 app.get('/postfach', (req, res) => {
-	res.render('postfach.ejs',{});
+
+	if(kunde.IstEingeloggt){
+
+		// Wenn die Zugangsdaten korrekt sind, dann wird die angesurfte Seite gerendert.
+		res.render('profil.ejs',{
+			Meldung: "",
+			Email: kunde.Mail
+		});
+
+	}else{
+		
+		// Wenn die Zugangsdaten nicht korrekt sind, dann wird die login-Seite gerendert.
+		res.render('login.ejs',{
+			Meldung: "Melden Sie sich zuerst an."
+		});
+	}
 });
+
+
 
 // Sobald die Seite "Kredit beantragen" aufgerufen wird, wird die app.get abgearbeitet.
 app.get('/kreditBeantragen', (req, res) => {
